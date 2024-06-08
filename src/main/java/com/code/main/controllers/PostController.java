@@ -4,6 +4,7 @@ import com.code.main.exception.ResourceNotFound;
 import com.code.main.payload.PostDto;
 import com.code.main.payload.PostResponse;
 import com.code.main.services.PostService;
+import com.code.main.utils.Utils;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,12 @@ public class PostController {
     }
 
     @GetMapping("all-posts")
-    public PostResponse getAllPost(@RequestParam(value = "pageno", required = false, defaultValue = "0") int pageno,
-                                   @RequestParam(value = "pagesize", defaultValue = "1", required = false) int pagesize,
-                                   @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy) {
+    public PostResponse getAllPost(@RequestParam(value = "pagno", defaultValue = Utils.DEFAULT_PAGENO, required = false) int pageno,
+                                   @RequestParam(value = "pagesize", defaultValue = Utils.DEFAULT_PAGESIZE, required = false) int pagesize,
+                                   @RequestParam(value = "sortBy", defaultValue = Utils.DEFAULT_SORTBY, required = false) String sortBy,
+                                   @RequestParam(value = "sortDir", defaultValue = Utils.DEFAULT_SORTDIR, required = false) String sortDir) {
 
-        return postService.getAllPost(pageno, pagesize, sortBy);
+        return postService.getAllPost(pageno, pagesize, sortBy, sortDir);
     }
 
     @GetMapping("{id}")
