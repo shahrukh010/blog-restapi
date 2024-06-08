@@ -29,14 +29,14 @@ public class PostController {
     }
 
     @GetMapping("all-posts")
-    public List<PostDto> getAllPost() {
-        return postService.getAllPost();
+    public List<PostDto> getAllPost(@RequestParam(value = "pageno", required = false, defaultValue = "0") int pageno, @RequestParam(value = "pagesize", defaultValue = "1", required = false) int pagesize) {
+        return postService.getAllPost(pageno, pagesize);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PostDto> getById(@PathVariable("id") String id) {
 
-            return new ResponseEntity<PostDto>(postService.getById(id), HttpStatus.OK);
+        return new ResponseEntity<PostDto>(postService.getById(id), HttpStatus.OK);
     }
 
     @PutMapping("{uuid}")
