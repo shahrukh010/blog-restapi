@@ -2,6 +2,7 @@ package com.code.main.controllers;
 
 import com.code.main.exception.ResourceNotFound;
 import com.code.main.payload.PostDto;
+import com.code.main.payload.PostResponse;
 import com.code.main.services.PostService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @GetMapping("all-posts")
-    public List<PostDto> getAllPost(@RequestParam(value = "pageno", required = false, defaultValue = "0") int pageno, @RequestParam(value = "pagesize", defaultValue = "1", required = false) int pagesize) {
+    public PostResponse getAllPost(@RequestParam(value = "pageno", required = false, defaultValue = "0") int pageno, @RequestParam(value = "pagesize", defaultValue = "1", required = false) int pagesize) {
         return postService.getAllPost(pageno, pagesize);
     }
 
