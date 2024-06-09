@@ -9,6 +9,7 @@ import com.code.main.payload.CommentResponse;
 import com.code.main.repository.CommentRepository;
 import com.code.main.repository.PostRepository;
 import com.code.main.services.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +23,12 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     private PostRepository postRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    private ModelMapper mapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -98,19 +102,21 @@ public class CommentServiceImpl implements CommentService {
 
     private Comment mapToEntity(CommentDto commentDto) {
 
-        Comment comment = new Comment();
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
+        Comment comment = mapper.map(commentDto, Comment.class);
+//        Comment comment = new Comment();
+//        comment.setName(commentDto.getName());
+//        comment.setEmail(commentDto.getEmail());
+//        comment.setBody(commentDto.getBody());
         return comment;
     }
 
     private CommentDto mapToDto(Comment comment) {
 
-        CommentDto dto = new CommentDto();
-        dto.setName(comment.getName());
-        dto.setEmail(comment.getEmail());
-        dto.setBody(comment.getBody());
+        CommentDto dto = mapper.map(comment, CommentDto.class);
+//        CommentDto dto = new CommentDto();
+//        dto.setName(comment.getName());
+//        dto.setEmail(comment.getEmail());
+//        dto.setBody(comment.getBody());
         return dto;
     }
 }
