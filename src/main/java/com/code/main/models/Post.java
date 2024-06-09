@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "post", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
@@ -24,5 +26,8 @@ public class Post {
     private String description;
     @Column(name = "content", columnDefinition = "text", nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comment;
 
 }
