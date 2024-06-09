@@ -5,9 +5,11 @@ import com.code.main.payload.PostDto;
 import com.code.main.payload.PostResponse;
 import com.code.main.services.PostService;
 import com.code.main.utils.Utils;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/post/")
@@ -20,7 +22,7 @@ public class PostController {
     }
 
     @PostMapping("create-post")
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto dto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto dto) {
         return new ResponseEntity<>(postService.createPost(dto), HttpStatus.CREATED);
     }
 
@@ -43,7 +45,7 @@ public class PostController {
     }
 
     @PutMapping("{uuid}")
-    public ResponseEntity<PostDto> updatePosts(@RequestBody PostDto postDto, @PathVariable("uuid") String id) {
+    public ResponseEntity<PostDto> updatePosts(@Valid @RequestBody PostDto postDto, @PathVariable("uuid") String id) {
 
         return new ResponseEntity<>(postService.updateById(postDto, id), HttpStatus.OK);
     }
