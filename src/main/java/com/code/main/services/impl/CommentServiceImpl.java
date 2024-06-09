@@ -1,7 +1,7 @@
 package com.code.main.services.impl;
 
 import com.code.main.exception.BlogApiException;
-import com.code.main.exception.ResourceNotFound;
+import com.code.main.exception.ResourceNotFoundException;
 import com.code.main.models.Comment;
 import com.code.main.models.Post;
 import com.code.main.payload.CommentDto;
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto createComment(String postid, CommentDto commentDto) {
 
-        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFound("post", "id", postid));
+        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFoundException("post", "id", postid));
 
         Comment comment = mapToEntity(commentDto);
         comment.setPost(post);
@@ -59,9 +59,9 @@ public class CommentServiceImpl implements CommentService {
 //        List<CommentDto> dto = commentList.stream().filter(comment -> comment.getUuid().equals(id)).map(c -> mapToDto(c)).collect(Collectors.toList());
 //        return dto.get(0);
 
-        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFound("post", "id", id));
+        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
 
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("comment", "uid", id));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("comment", "uid", id));
         if (!comment.getPost().getId().equals(post.getId())) {
 
             throw new BlogApiException(HttpStatus.BAD_REQUEST, "Id is not matched");
@@ -75,8 +75,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto updateComment(String postid, String id, CommentDto commentDto) {
 
-        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFound("post", "post", id));
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("comment", "id", id));
+        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFoundException("post", "post", id));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("comment", "id", id));
         if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogApiException(HttpStatus.BAD_REQUEST, "Id is not matched");
         }
@@ -91,8 +91,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteById(String postid, String id) {
 
-        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFound("post", "post", postid));
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("comment", "id", id));
+        Post post = postRepository.findById(postid).orElseThrow(() -> new ResourceNotFoundException("post", "post", postid));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("comment", "id", id));
         if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogApiException(HttpStatus.BAD_REQUEST, "Id not found");
         }

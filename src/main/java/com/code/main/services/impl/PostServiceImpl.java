@@ -1,6 +1,6 @@
 package com.code.main.services.impl;
 
-import com.code.main.exception.ResourceNotFound;
+import com.code.main.exception.ResourceNotFoundException;
 import com.code.main.models.Post;
 import com.code.main.payload.PostDto;
 import com.code.main.payload.PostResponse;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,14 +57,14 @@ public class PostServiceImpl implements PostService {
     public PostDto getById(String id) {
 
 
-        Post post = postRepository.findById(id).get();
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
         return mapToDto(post);
     }
 
     @Override
     public PostDto updateById(PostDto postDto, String id) {
 
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFound("post", "id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
 
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());

@@ -1,19 +1,13 @@
 package com.code.main.controllers;
 
-import com.code.main.exception.ResourceNotFound;
+import com.code.main.exception.ResourceNotFoundException;
 import com.code.main.payload.PostDto;
 import com.code.main.payload.PostResponse;
 import com.code.main.services.PostService;
 import com.code.main.utils.Utils;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/post/")
@@ -41,8 +35,11 @@ public class PostController {
 
     @GetMapping("{id}")
     public ResponseEntity<PostDto> getById(@PathVariable("id") String id) {
-
-        return new ResponseEntity<PostDto>(postService.getById(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(postService.getById(id), HttpStatus.OK);
+        } catch (ResourceNotFoundException ex) {
+            throw new ResourceNotFoundException("Post", "id", id);
+        }
     }
 
     @PutMapping("{uuid}")
