@@ -10,6 +10,7 @@ import com.code.main.repository.UserRepository;
 import com.code.main.security.JwtTokenProvider;
 import com.code.main.services.AuthService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,4 +76,17 @@ public class AuthServiceImpl implements AuthService {
         return "user register successfully";
 
     }
+
+    private static final int OTP_LENGTH = 6;
+    private final SecureRandom secureRandom = new SecureRandom();
+
+    @Override
+    public String generateOtp(String email) {
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            otp.append(secureRandom.nextInt(10));
+        }
+        return otp.toString();
+    }
 }
+
