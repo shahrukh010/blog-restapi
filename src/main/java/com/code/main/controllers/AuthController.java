@@ -1,5 +1,6 @@
 package com.code.main.controllers;
 
+import com.code.main.payload.JwtAuthResponse;
 import com.code.main.payload.LoginDto;
 import com.code.main.payload.RegisterDto;
 import com.code.main.services.AuthService;
@@ -21,9 +22,13 @@ public class AuthController {
     }
 
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
 
-        return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
+        JwtAuthResponse response = new JwtAuthResponse();
+        String token = authService.login(loginDto);
+        response.setToken(token);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = {"/register", "/signup"})

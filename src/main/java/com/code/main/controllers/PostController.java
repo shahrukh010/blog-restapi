@@ -5,6 +5,8 @@ import com.code.main.payload.PostDto;
 import com.code.main.payload.PostResponse;
 import com.code.main.services.PostService;
 import com.code.main.utils.Utils;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +24,9 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")//in database you have to save role prefix with ROLE_ADMIN
     @PostMapping("create-post")
-    public ResponseEntity<PostDto> createPost(@Validated @RequestBody PostDto dto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto dto) {
         return new ResponseEntity<>(postService.createPost(dto), HttpStatus.CREATED);
     }
 

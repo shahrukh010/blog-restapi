@@ -1,13 +1,15 @@
 package com.code.main.security;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,21 +17,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
-
 
     private UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    private JwtAuthenticationFilter authenticationFilter;
+
+    public SecurityConfig(UserDetailsService userDetailsService,
+                          JwtAuthenticationEntryPoint authenticationEntryPoint,
+                          JwtAuthenticationFilter authenticationFilter) {
         this.userDetailsService = userDetailsService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.authenticationFilter = authenticationFilter;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -38,47 +47,41 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    //USE FOR BASIC AUTHENTICATION
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeHttpRequests((authorize) -> authorize.
-                // anyRequest().authenticated()//
-                        requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                .anyRequest().authenticated()
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests((authorize) ->
+                        authorize.requestMatchers(HttpMethod.GET, "/api/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
-        ).httpBasic(Customizer.withDefaults());
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return httpSecurity.build();
+        return http.build();
     }
 
 
-    //In Memory Authentication
 //    @Bean
-//    public UserDetailsService userDetailsService() {
-//
-//        UserDetails userone = User.builder()
+//    public UserDetailsService userDetailsService(){
+//        UserDetails ramesh = User.builder()
 //                .username("hector")
-//                .password(passwordEncoder().encode("annie"))
+//                .password(passwordEncoder().encode("12345"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder().encode("admin"))
 //                .roles("ADMIN")
 //                .build();
-//
-//        UserDetails usertwo = User.builder()
-//                .username("nic")
-//                .password(passwordEncoder().encode("bridget"))
-//                .roles("SALES")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(userone, usertwo);
+//        return new InMemoryUserDetailsManager(ramesh, admin);
 //    }
-
-    public static void main(String... args) {
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("12345"));
-    }
-
-
 }
-
-

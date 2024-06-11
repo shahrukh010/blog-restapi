@@ -7,12 +7,12 @@ import com.code.main.payload.LoginDto;
 import com.code.main.payload.RegisterDto;
 import com.code.main.repository.RoleRepository;
 import com.code.main.repository.UserRepository;
+import com.code.main.security.JwtTokenProvider;
 import com.code.main.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,15 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository) {
+    private JwtTokenProvider jwtTokenProvider;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository,
+                           JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -42,7 +46,8 @@ public class AuthServiceImpl implements AuthService {
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
-        return "Login successfully";
+        String token = jwtTokenProvider.generateToken(authenticate);
+        return token;
     }
 
     @Override
