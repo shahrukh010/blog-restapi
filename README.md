@@ -5,3 +5,10 @@ This project is a RESTful API for a blogging platform. The API provides features
 * Post Management: Create, read, update, and delete blog posts.
 * Comment System: Add, view, and manage comments on posts.
 * Categories: Organize posts into categories.
+
+# Tech Stack
+* Backend Framework: Spring Boot
+* Database: MySQL
+* ORM/ODM: Spring Data JPA
+* Security: Spring Security
+* Authentication: JWT (JSON Web Token)
